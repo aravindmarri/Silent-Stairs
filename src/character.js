@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import { normalizeAngle } from './align.js';
 
 // Animates `character.position` (in its parent's local space) through a
 // list of waypoints at a given speed (a single number, or an array with
@@ -74,6 +75,50 @@ export function walkPath(character, waypoints, speeds = 2.2, { signal } = {}) {
     }
 
     clock.start();
+    requestAnimationFrame(step);
+  });
+}
+
+// Smoothly turns `character` to face the camera, over `duration` ms,
+// via the shortest yaw path — used once the ghost reaches a level's
+// goal. Only `.rotation.y` is ever touched (matching the convention
+// everywhere else in this file), so it stays upright.
+//
+// An orthographic camera's rays are all parallel, so "facing the
+// camera" is the same world-space direction everywhere in the scene,
+// regardless of the character's position: the negative of the camera's
+// view direction. That direction is computed in WORLD space, then
+// converted into the character's PARENT's local space (removing
+// whatever the parent chain's current rotation is — chiefly the
+// puzzle's own world-rotation — since `character.rotation.y` is
+// expressed in that local frame) so the result faces the screen
+// correctly no matter how the world is currently rotated.
+export function faceCamera(character, camera, duration = 500) {
+  return new Promise((resolve) => {
+    const parent = character.parent;
+    parent.updateMatrixWorld(true);
+    const parentWorldQuat = new THREE.Quaternion();
+    parent.getWorldQuaternion(parentWorldQuat);
+    const toParentLocal = parentWorldQuat.clone().invert();
+
+    const worldForward = new THREE.Vector3();
+    camera.getWorldDirection(worldForward);
+    worldForward.negate(); // point back toward the camera, not along its view ray
+
+    const localForward = worldForward.applyQuaternion(toParentLocal);
+    const targetYaw = Math.atan2(localForward.x, localForward.z);
+
+    const fromYaw = character.rotation.y;
+    const delta = normalizeAngle(targetYaw - fromYaw); // shortest yaw path, either direction
+    const startTime = performance.now();
+
+    function step() {
+      const t = Math.min((performance.now() - startTime) / duration, 1);
+      const eased = 1 - Math.pow(1 - t, 3);
+      character.rotation.y = fromYaw + delta * eased;
+      if (t < 1) requestAnimationFrame(step);
+      else resolve();
+    }
     requestAnimationFrame(step);
   });
 }

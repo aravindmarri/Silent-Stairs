@@ -5,7 +5,14 @@
 // `pointercancel` handled the same as a release so a cancelled gesture
 // (e.g. the browser taking over for a system gesture) can't leave
 // `dragging` stuck true.
-export function attachDragRotate(domElement, target, { sensitivity = 0.008, onChange, onRelease } = {}) {
+//
+// `targetOrGetter` may be a fixed Object3D, or a function returning the
+// current one — the latter lets a single set of listeners (and a single
+// lock/unlock state) survive across level loads, since the "world"
+// group being rotated is a different object per level.
+export function attachDragRotate(domElement, targetOrGetter, { sensitivity = 0.008, onChange, onRelease } = {}) {
+  const getTarget = typeof targetOrGetter === 'function' ? targetOrGetter : () => targetOrGetter;
+
   let dragging = false;
   let locked = false;
   let lastX = 0;
@@ -23,6 +30,7 @@ export function attachDragRotate(domElement, target, { sensitivity = 0.008, onCh
     if (locked || !dragging || e.pointerId !== activePointerId) return;
     const dx = e.clientX - lastX;
     lastX = e.clientX;
+    const target = getTarget();
     target.rotation.y += dx * sensitivity;
     onChange?.(target.rotation.y);
   };
@@ -32,7 +40,7 @@ export function attachDragRotate(domElement, target, { sensitivity = 0.008, onCh
     const wasDragging = dragging;
     dragging = false;
     activePointerId = null;
-    if (wasDragging && !locked) onRelease?.(target.rotation.y);
+    if (wasDragging && !locked) onRelease?.(getTarget().rotation.y);
   };
 
   domElement.addEventListener('pointerdown', down);

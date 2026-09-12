@@ -117,6 +117,78 @@ html, body, #app {
   background: rgba(242, 193, 78, 0.12);
 }
 
+#controls #rotateLeftBtn:not(:disabled),
+#controls #rotateRightBtn:not(:disabled) {
+  border-color: #8ab4f2;
+  color: #8ab4f2;
+}
+
+#controls #rotateLeftBtn:not(:disabled):hover,
+#controls #rotateRightBtn:not(:disabled):hover {
+  background: rgba(138, 180, 242, 0.12);
+}
+
+#controls #nextBtn {
+  border-color: #6bd08a;
+  color: #6bd08a;
+}
+
+#controls #nextBtn:hover {
+  background: rgba(107, 208, 138, 0.12);
+}
+
+#devToolbar {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  padding: 8px 10px;
+  background: rgba(20, 22, 31, 0.85);
+  border: 1px solid rgba(244, 241, 234, 0.2);
+  border-radius: 8px;
+  font-size: 0.72rem;
+  color: #f4f1ea;
+}
+
+#devToolbar select,
+#devToolbar button {
+  font: inherit;
+  font-size: 0.72rem;
+  background: transparent;
+  color: inherit;
+  border: 1px solid rgba(244, 241, 234, 0.35);
+  border-radius: 5px;
+  padding: 5px 8px;
+  cursor: pointer;
+}
+
+#devToolbar select:hover,
+#devToolbar button:hover {
+  border-color: rgba(244, 241, 234, 0.7);
+}
+
+@media (max-width: 420px) {
+  /* Stays pinned above the title rather than moving to the bottom —
+     the game's own Move/Cross/Restart bar already lives down there,
+     and full width at the bottom would sit on top of it. */
+  #devToolbar {
+    top: 8px;
+    right: 8px;
+    left: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  /* Only pushed down when the toolbar is actually present, so regular
+     players (no #devToolbar in the DOM at all) see the title exactly
+     where it's always been. */
+  #app:has(#devToolbar) #title {
+    top: 60px;
+  }
+}
+
 #webglFallback {
   position: absolute;
   inset: 0;
