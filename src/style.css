@@ -55,9 +55,12 @@ html, body, #app {
 
 #hintBar {
   position: absolute;
-  bottom: 40px;
+  bottom: 28px;
   left: 50%;
   transform: translateX(-50%);
+  width: 100%;
+  max-width: 420px;
+  padding: 0 20px;
   color: #f4f1ea;
   text-align: center;
   pointer-events: none;
@@ -67,34 +70,79 @@ html, body, #app {
   align-items: center;
 }
 
-#hintBar p {
-  margin: 0;
+#hint {
+  margin: 0 0 14px;
   font-size: 0.9rem;
   line-height: 1.5;
+  opacity: 0.85;
+  min-height: 1.4em;
 }
 
-#hint {
-  opacity: 0.9;
-}
-
-#hintSecondary {
-  opacity: 0.55;
-  font-size: 0.8rem;
-  margin-top: 4px;
-  transition: opacity 0.2s, color 0.2s;
-}
-
-#hintSecondary.walkable {
+#controls {
+  display: flex;
+  gap: 10px;
   pointer-events: auto;
-  cursor: pointer;
-  opacity: 1;
-  color: #f2c14e;
-  text-decoration: underline;
-  text-underline-offset: 3px;
 }
 
-#hintSecondary.walkable:hover {
-  color: #f6d47a;
+#controls button {
+  background: transparent;
+  border: 1px solid rgba(244, 241, 234, 0.35);
+  color: #f4f1ea;
+  font: inherit;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  padding: 9px 18px;
+  border-radius: 7px;
+  cursor: pointer;
+  transition: opacity 0.2s, border-color 0.2s, background-color 0.2s, color 0.2s;
+}
+
+#controls button:hover:not(:disabled) {
+  border-color: rgba(244, 241, 234, 0.7);
+  background: rgba(244, 241, 234, 0.08);
+}
+
+#controls button:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+#controls #crossBtn:not(:disabled) {
+  border-color: #f2c14e;
+  color: #f2c14e;
+}
+
+#controls #crossBtn:not(:disabled):hover {
+  background: rgba(242, 193, 78, 0.12);
+}
+
+#webglFallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 32px;
+  text-align: center;
+  color: #f4f1ea;
+  background: #1b1f2a;
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+@media (max-width: 420px) {
+  #title h1 {
+    font-size: 1.3rem;
+    letter-spacing: 0.2em;
+  }
+  #hintBar {
+    bottom: 20px;
+  }
+  #controls button {
+    padding: 8px 14px;
+    font-size: 0.72rem;
+  }
 }
 
 #winBanner {

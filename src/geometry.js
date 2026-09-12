@@ -44,6 +44,20 @@ export function createStaircase({
   // geometry (see pathLocal below).
   const exitLocal = noses[noses.length - 1].clone();
 
+  // The full-width edges at the entrance and exit — not just their
+  // center points. Exact alignment is checked against both endpoints of
+  // each edge, so a connector that only lines up at its midpoint (but is
+  // angled or mismatched in width) is correctly rejected.
+  const halfWidth = width / 2;
+  const entryEdge = {
+    a: new THREE.Vector3(entryLocal.x, entryLocal.y, -halfWidth),
+    b: new THREE.Vector3(entryLocal.x, entryLocal.y, halfWidth),
+  };
+  const exitEdge = {
+    a: new THREE.Vector3(exitLocal.x, exitLocal.y, -halfWidth),
+    b: new THREE.Vector3(exitLocal.x, exitLocal.y, halfWidth),
+  };
+
   // The walking path follows the nosing line — the front-top corner of
   // each tread, in sequence. A straight segment between two consecutive
   // nosings starts at the higher tread's height and descends to the
@@ -55,7 +69,7 @@ export function createStaircase({
   // the stairs.
   const pathLocal = [entryLocal.clone(), ...noses.map((n) => n.clone())];
 
-  return { group, entryLocal, exitLocal, pathLocal, height: steps * rise, length: x };
+  return { group, entryLocal, exitLocal, entryEdge, exitEdge, pathLocal, width, height: steps * rise, length: x };
 }
 
 export function createMarker(color) {
