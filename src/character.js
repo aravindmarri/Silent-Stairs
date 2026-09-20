@@ -93,7 +93,7 @@ export function walkPath(character, waypoints, speeds = 2.2, { signal } = {}) {
 // puzzle's own world-rotation — since `character.rotation.y` is
 // expressed in that local frame) so the result faces the screen
 // correctly no matter how the world is currently rotated.
-export function faceCamera(character, camera, duration = 500) {
+export function faceCamera(character, camera, duration = 500, { signal } = {}) {
   return new Promise((resolve) => {
     const parent = character.parent;
     parent.updateMatrixWorld(true);
@@ -113,6 +113,10 @@ export function faceCamera(character, camera, duration = 500) {
     const startTime = performance.now();
 
     function step() {
+      if (signal?.cancelled) {
+        resolve();
+        return;
+      }
       const t = Math.min((performance.now() - startTime) / duration, 1);
       const eased = 1 - Math.pow(1 - t, 3);
       character.rotation.y = fromYaw + delta * eased;
