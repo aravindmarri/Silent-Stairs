@@ -80,8 +80,65 @@ html, body, #app {
 
 #controls {
   display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
   gap: 10px;
   pointer-events: auto;
+}
+
+#mechanicStatus {
+  margin: 0 0 9px;
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #91bdbd;
+}
+
+.echo-level #hintBar,
+.twin-level #hintBar {
+  max-width: 570px;
+}
+
+.echo-level #controls,
+.twin-level #controls {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  gap: 8px;
+}
+
+#controls #echoBtn:not(:disabled),
+#controls #routeBtn:not(:disabled),
+#controls #selectBridgeBtn:not(:disabled) {
+  border-color: #9edee0;
+  color: #b4dfe1;
+}
+
+#controls #hintBtn {
+  border-color: transparent;
+  opacity: 0.65;
+}
+
+#controls #hintBtn[aria-pressed="true"] {
+  color: #f2c14e;
+  opacity: 1;
+}
+
+@media (max-width: 600px) {
+  .echo-level #controls button,
+  .twin-level #controls button {
+    padding: 9px 10px;
+  }
+}
+
+#controls #balanceLeftBtn:not(:disabled),
+#controls #balanceRightBtn:not(:disabled) {
+  border-color: #91bdbd;
+  color: #b4d5ce;
+}
+
+#controls #balanceLeftBtn:not(:disabled):hover,
+#controls #balanceRightBtn:not(:disabled):hover {
+  background: rgba(145, 189, 189, 0.12);
 }
 
 #controls button {
