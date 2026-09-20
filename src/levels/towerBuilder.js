@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import { createStaircase, createMarker } from '../geometry.js';
+import { stairDimensions } from './stairDimensions.js';
 
 // A fixed tower (base + core) carries a rotating collar assembly on top
 // — the collar, the central landing (B), a staircase arm, and a visible
@@ -94,12 +95,10 @@ export function buildTowerLevel() {
   const ARM_STEPS = 5;
   const ARM_RISE = LANDING_SURFACE_HEIGHT / ARM_STEPS;
   const arm = createStaircase({
+    ...stairDimensions,
     steps: ARM_STEPS,
     rise: ARM_RISE,
-    run: 1.15,
-    width: 2.3,
     color: STAIR_COLOR,
-    endScale: 1.7,
     enlargeFirst: false,
     enlargeLast: true,
   });

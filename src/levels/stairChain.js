@@ -14,7 +14,7 @@ import { solveConnectorPosition } from '../align.js';
 // Every point/edge this returns is already expressed in the chain
 // group's own local space, so callers (the level runtime) never need
 // to know which stairs have a placement offset and which don't.
-export function buildStairChain({ camera, stairSpecs, connectionAngles, connectionDepths }) {
+export function buildStairChain({ camera, stairSpecs, connectionAngles, connectionDepths, center = false }) {
   const group = new THREE.Group();
   const stairs = []; // { pathLocal, entryEdge, exitEdge, entryLocal, exitLocal, height }
 
@@ -47,6 +47,20 @@ export function buildStairChain({ camera, stairSpecs, connectionAngles, connecti
       exitLocal: transformPoint(raw.exitLocal, placementMatrix),
       height: raw.height,
     });
+  }
+
+  if (center) {
+    // Move geometry AND walking/connection coordinates together. Rotating
+    // about the puzzle's middle preserves the solved edge alignment.
+    const midpoint = new THREE.Box3().setFromObject(group).getCenter(new THREE.Vector3());
+    const offset = new THREE.Vector3(0, 2, 0).sub(midpoint);
+    for (const child of group.children) child.position.add(offset);
+    for (const stair of stairs) {
+      for (const point of [...stair.pathLocal, stair.entryLocal, stair.exitLocal,
+        stair.entryEdge.a, stair.entryEdge.b, stair.exitEdge.a, stair.exitEdge.b]) {
+        point.add(offset);
+      }
+    }
   }
 
   // One connection per adjacent pair, each with its own solved target
